@@ -35,12 +35,13 @@ object UserAccessTokenFacadeImpl : UserAccessTokenFacade {
 
     override suspend fun create(data: CreateUserAccessTokenDto) = dbQuery {
         val timeNow = LocalDateTime.now()
-        val statement = UserAccessTokenTable.insert {
-            it[token] = data.token
-            it[expires_in] = data.expiresIn
-            it[user_uid] = data.userUid
-            it[created_at] = timeNow
-        }
+        val statement = UserAccessTokenTable
+            .insert {
+                it[token] = data.token
+                it[expires_in] = data.expiresIn
+                it[user_uid] = data.userUid
+                it[created_at] = timeNow
+            }
         statement.resultedValues?.singleOrNull()?.toUserAccessTokenDto()
     }
 

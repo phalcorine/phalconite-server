@@ -22,6 +22,8 @@ object DatabaseFactory {
             SchemaUtils.createMissingTablesAndColumns(
                 UserTable,
                 UserAccessTokenTable,
+                UserGroupTable,
+                UsersToUserGroupsTable,
                 ProjectStatusTable,
                 ProjectTypeTable,
                 ProjectTable

@@ -8,7 +8,7 @@ import io.phalconite.domain.*
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ApiResource<T>(
+data class ApiDataResource<T>(
     val data: T
 )
 
@@ -37,13 +37,13 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleError(error: DomainErro
             GenericErrorResponse(error.message)
         )
     }
-    is UserNotFoundError -> {
+    is EntityNotFoundError -> {
         call.respond(
             status = HttpStatusCode.NotFound,
             GenericErrorResponse(error.message)
         )
     }
-    is DuplicateUserError -> {
+    is ConflictRecordError -> {
         call.respond(
             status = HttpStatusCode.Conflict,
             GenericErrorResponse(error.message)
