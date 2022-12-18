@@ -6,13 +6,14 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.phalconite.api.ApiResource
+import io.phalconite.api.ApiDataResource
 import io.phalconite.api.handleError
 import io.phalconite.domain.dto.CreateUserRequestDto
 import io.phalconite.domain.dto.UpdateUserInfoRequestDto
 import io.phalconite.domain.BadRequestError
 import io.phalconite.domain.UnprocessableEntity
 import io.phalconite.domain.dto.UpdateUserActivationStatusRequestDto
+import io.phalconite.services.user.UserService
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
@@ -30,7 +31,7 @@ fun Route.userRoutes() {
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    ApiResource(users)
+                    ApiDataResource(users)
                 )
             }.mapLeft {
                 handleError(it)
@@ -46,7 +47,7 @@ fun Route.userRoutes() {
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    ApiResource(user)
+                    ApiDataResource(user)
                 )
             }.mapLeft {
                 handleError(it)
@@ -62,7 +63,7 @@ fun Route.userRoutes() {
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    ApiResource(user)
+                    ApiDataResource(user)
                 )
             }.mapLeft {
                 handleError(it)
@@ -78,7 +79,7 @@ fun Route.userRoutes() {
 
                 call.respond(
                     status = HttpStatusCode.Created,
-                    ApiResource(response)
+                    ApiDataResource(response)
                 )
             }.mapLeft {
                 handleError(it)
@@ -97,7 +98,7 @@ fun Route.userRoutes() {
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    ApiResource(response)
+                    ApiDataResource(response)
                 )
             }.mapLeft {
                 handleError(it)
@@ -115,7 +116,7 @@ fun Route.userRoutes() {
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    ApiResource(response)
+                    ApiDataResource(response)
                 )
             }.mapLeft {
                 handleError(it)
@@ -131,7 +132,7 @@ fun Route.userRoutes() {
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    ApiResource(response)
+                    ApiDataResource(response)
                 )
             }.mapLeft {
                 handleError(it)

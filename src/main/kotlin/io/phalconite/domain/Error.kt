@@ -8,14 +8,11 @@ sealed interface DomainError {
                 get() = "Invalid Credentials!"
         }
     }
-    object UserNotFoundError : DomainError {
+    object EntityNotFoundError : DomainError {
         override val message: String
-            get() = "A user with the specified criteria was not found!"
+            get() = "A record with the specified criteria was not found!"
     }
-    object DuplicateUserError : DomainError {
-        override val message: String
-            get() = "A user with the specified email already exists!"
-    }
+    data class ConflictRecordError(override val message: String) : DomainError
     object DatabaseError : DomainError {
         override val message: String
             get() = "A database error occurred!"
@@ -30,8 +27,8 @@ sealed interface DomainError {
 
 typealias AuthInvalidCredentials = DomainError.AuthException.InvalidCredentials
 typealias AppUnknownError = DomainError.UnknownError
-typealias UserNotFoundError = DomainError.UserNotFoundError
-typealias DuplicateUserError = DomainError.DuplicateUserError
+typealias EntityNotFoundError = DomainError.EntityNotFoundError
+typealias ConflictRecordError = DomainError.ConflictRecordError
 typealias DatabaseError = DomainError.DatabaseError
 typealias BadRequestError = DomainError.BadRequestError
 typealias UnprocessableEntity = DomainError.UnprocessableEntity
