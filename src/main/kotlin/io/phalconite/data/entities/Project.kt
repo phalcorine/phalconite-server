@@ -1,6 +1,7 @@
 package io.phalconite.data.entities
 
 import io.phalconite.domain.dto.ProjectDto
+import io.phalconite.domain.enums.ProjectStatusEnum
 import kotlinx.datetime.toKotlinLocalDateTime
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
@@ -10,6 +11,7 @@ object ProjectTable : IntIdTable("project") {
     val uid = varchar("uid", 50).uniqueIndex()
     val name = varchar("name", 100)
     val description = varchar("description", 500)
+    val status = enumerationByName<ProjectStatusEnum>("status", 20)
     val start_date = datetime("start_date").nullable()
     val end_date = datetime("end_date").nullable()
     val created_at = datetime("created_at")
@@ -17,7 +19,6 @@ object ProjectTable : IntIdTable("project") {
     // relations
     val created_by_uid = reference("created_by_uid", UserTable.uid)
     val type_uid = reference("type_uid", ProjectTypeTable.uid)
-    val status_uid = reference("status_uid", ProjectStatusTable.uid)
 }
 
 fun ResultRow.toProjectDto(): ProjectDto {
@@ -25,8 +26,8 @@ fun ResultRow.toProjectDto(): ProjectDto {
         uid = this[ProjectTable.uid],
         name = this[ProjectTable.name],
         description = this[ProjectTable.description],
+        status = this[ProjectTable.status],
         createdByUid = this[ProjectTable.created_by_uid],
-        statusUid = this[ProjectTable.status_uid],
         typeUid = this[ProjectTable.type_uid],
         createdAt = this[ProjectTable.created_at].toKotlinLocalDateTime(),
         updatedAt = this[ProjectTable.updated_at].toKotlinLocalDateTime(),

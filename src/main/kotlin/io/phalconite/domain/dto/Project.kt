@@ -1,5 +1,6 @@
 package io.phalconite.domain.dto
 
+import io.phalconite.domain.enums.ProjectStatusEnum
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,24 +10,28 @@ data class ProjectDto(
     val uid: String,
     val name: String,
     val description: String,
+    val status: ProjectStatusEnum,
+    @SerialName("created_at")
     val createdAt: LocalDateTime,
+    @SerialName("updated_at")
     val updatedAt: LocalDateTime,
+    @SerialName("created_by_uid")
     val createdByUid: String,
-    val statusUid: String,
+    @SerialName("type_uid")
     val typeUid: String,
+    @SerialName("start_date")
     val startDate: LocalDateTime? = null,
+    @SerialName("end_date")
     val endDate: LocalDateTime? = null,
     val createdBy: UserDto? = null,
     val type: ProjectTypeDto? = null,
-    val status: ProjectStatusDto? = null
 )
 
 @Serializable
-data class CreateProjectDto(
+data class CreateProjectRequestDto(
     val name: String,
     val description: String,
-    @SerialName("status_uid")
-    val statusUid: String,
+    val status: ProjectStatusEnum,
     @SerialName("type_uid")
     val typeUid: String,
     @SerialName("start_date")
@@ -36,15 +41,36 @@ data class CreateProjectDto(
 )
 
 @Serializable
-data class UpdateProjectDto(
+data class UpdateProjectRequestDto(
     val name: String,
     val description: String,
-    @SerialName("status_uid")
-    val statusUid: String,
+    val status: ProjectStatusEnum,
     @SerialName("type_uid")
     val typeUid: String,
     @SerialName("start_date")
     val startDate: LocalDateTime? = null,
     @SerialName("end_date")
+    val endDate: LocalDateTime? = null,
+)
+
+// Domain
+
+data class CreateProjectDto(
+    val uid: String,
+    val name: String,
+    val description: String,
+    val status: ProjectStatusEnum,
+    val typeUid: String,
+    val createdByUid: String,
+    val startDate: LocalDateTime? = null,
+    val endDate: LocalDateTime? = null,
+)
+
+data class UpdateProjectDto(
+    val name: String,
+    val description: String,
+    val status: ProjectStatusEnum,
+    val typeUid: String,
+    val startDate: LocalDateTime? = null,
     val endDate: LocalDateTime? = null,
 )

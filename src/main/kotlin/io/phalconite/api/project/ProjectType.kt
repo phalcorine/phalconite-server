@@ -1,4 +1,4 @@
-package io.phalconite.api.user
+package io.phalconite.api.project
 
 import arrow.core.continuations.either
 import io.ktor.http.*
@@ -10,60 +10,59 @@ import io.phalconite.api.ApiDataResource
 import io.phalconite.api.handleError
 import io.phalconite.domain.BadRequestError
 import io.phalconite.domain.UnprocessableEntityError
-import io.phalconite.domain.dto.CreateUserGroupRequestDto
-import io.phalconite.domain.dto.UpdateUserGroupRequestDto
-import io.phalconite.services.user.UserGroupService
-import io.phalconite.services.user.UserService
+import io.phalconite.domain.dto.CreateProjectTypeRequestDto
+import io.phalconite.domain.dto.UpdateProjectTypeRequestDto
+import io.phalconite.services.project.ProjectService
+import io.phalconite.services.project.ProjectTypeService
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
-fun Route.userGroupRoutes() {
-    val userGroupService by closestDI().instance<UserGroupService>()
-    val userService by closestDI().instance<UserService>()
+fun Route.projectTypeRoutes() {
+    val projectTypeService by closestDI().instance<ProjectTypeService>()
+    val projectService by closestDI().instance<ProjectService>()
 
-    route("/group") {
+    route("/type") {
 
-        // List Groups
+        // List
         get("/list") {
             either {
-                val groups = userGroupService.list().bind()
+                val projectTypes = projectTypeService.list().bind()
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    ApiDataResource(groups)
+                    ApiDataResource(projectTypes)
                 )
             }.mapLeft {
                 handleError(it)
             }
         }
 
-        // Find Group by UID
+        // Find By UID
         get("/find/uid/{uid}") {
             either {
                 val uid = call.parameters["uid"] ?: return@either shift(BadRequestError("Invalid Route Parameter!"))
 
-                val group = userGroupService.findByUid(uid).bind()
+                val projectType = projectTypeService.findByUid(uid).bind()
 
                 call.respond(
                     status = HttpStatusCode.OK,
-                    ApiDataResource(group)
+                    ApiDataResource(projectType)
                 )
             }.mapLeft {
                 handleError(it)
             }
         }
 
-        // Create Group
         post("/create") {
             either {
                 val requestBody = runCatching {
-                    call.receive<CreateUserGroupRequestDto>()
+                    call.receive<CreateProjectTypeRequestDto>()
                 }.getOrElse { return@either shift(UnprocessableEntityError) }
 
-                val response = userGroupService.create(requestBody).bind()
+                val response = projectTypeService.create(requestBody).bind()
 
                 call.respond(
-                    status = HttpStatusCode.OK,
+                    status = HttpStatusCode.Created,
                     ApiDataResource(response)
                 )
             }.mapLeft {
@@ -71,15 +70,15 @@ fun Route.userGroupRoutes() {
             }
         }
 
-        // Update Group
+        // Update
         patch("/update/{uid}") {
             either {
                 val uid = call.parameters["uid"] ?: return@either shift(BadRequestError("Invalid Route Parameter!"))
                 val requestBody = runCatching {
-                    call.receive<UpdateUserGroupRequestDto>()
+                    call.receive<UpdateProjectTypeRequestDto>()
                 }.getOrElse { return@either shift(UnprocessableEntityError) }
 
-                val response = userGroupService.update(uid, requestBody).bind()
+                val response = projectTypeService.update(uid, requestBody).bind()
 
                 call.respond(
                     status = HttpStatusCode.OK,
@@ -90,12 +89,12 @@ fun Route.userGroupRoutes() {
             }
         }
 
-        // Delete Group
+        // Delete
         delete("/delete/{uid}") {
             either {
                 val uid = call.parameters["uid"] ?: return@either shift(BadRequestError("Invalid Route Parameter!"))
 
-                val response = userGroupService.delete(uid).bind()
+                val response = projectTypeService.delete(uid).bind()
 
                 call.respond(
                     status = HttpStatusCode.OK,
@@ -106,38 +105,24 @@ fun Route.userGroupRoutes() {
             }
         }
 
-        // Relations: Users
-        route("/relation/{uid}/users") {
-            // List
-            get("/list") {
+        // Relations
+        route("/relation/{uid}") {
+
+            // Projects
+            get("/projects") {
                 either {
                     val uid = call.parameters["uid"] ?: return@either shift(BadRequestError("Invalid Route Parameter!"))
 
-                    val groupUsers = userService.findManyUsersByGroupUid(uid).bind()
+                    val projects = projectService.listByProjectType(uid).bind()
 
                     call.respond(
                         status = HttpStatusCode.OK,
-                        ApiDataResource(groupUsers)
+                        ApiDataResource(projects)
                     )
                 }.mapLeft {
                     handleError(it)
                 }
             }
-
-            // Add User to Group
-            post("/add/{user_uid}") {
-                either {
-                    val groupUid = call.parameters["uid"] ?: return@either shift(BadRequestError("Invalid Route Parameter!"))
-                    val userUid = call.parameters["user_uid"] ?: return@either shift(BadRequestError("Invalid Route Parameter!"))
-
-                    val response = userGroupService.addUserToGroup(groupUid, userUid).bind()
-
-                    call.respond(HttpStatusCode.NoContent)
-                }.mapLeft {
-                    handleError(it)
-                }
-            }
         }
-
     }
 }

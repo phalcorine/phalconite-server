@@ -2,6 +2,8 @@ package io.phalconite.data
 
 import io.phalconite.config.DatabaseConfig
 import io.phalconite.data.entities.*
+import io.phalconite.data.seeders.projectSeeders
+import io.phalconite.data.seeders.projectTypeSeeders
 import io.phalconite.data.seeders.userSeeder
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
@@ -18,23 +20,28 @@ object DatabaseFactory {
             driver = databaseConfig.driverClassName
         )
 
+        val tables = listOf(
+            UserTable,
+            UserAccessTokenTable,
+            UserGroupTable,
+            UsersToUserGroupsTable,
+            ProjectTypeTable,
+            ProjectTable,
+            ProjectCommentTable
+        )
         transaction {
-            SchemaUtils.createMissingTablesAndColumns(
-                UserTable,
-                UserAccessTokenTable,
-                UserGroupTable,
-                UsersToUserGroupsTable,
-                ProjectStatusTable,
-                ProjectTypeTable,
-                ProjectTable
-            )
+//            SchemaUtils.drop(*tables.toTypedArray())
+            println("Creating missing tables and columns")
+            SchemaUtils.createMissingTablesAndColumns(*tables.toTypedArray())
         }
 
         runSeeders()
     }
 
     private fun runSeeders() {
+        projectTypeSeeders()
         userSeeder()
+        projectSeeders()
     }
 }
 
