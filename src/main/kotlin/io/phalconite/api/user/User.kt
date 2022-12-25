@@ -11,7 +11,7 @@ import io.phalconite.api.handleError
 import io.phalconite.domain.dto.CreateUserRequestDto
 import io.phalconite.domain.dto.UpdateUserInfoRequestDto
 import io.phalconite.domain.BadRequestError
-import io.phalconite.domain.UnprocessableEntity
+import io.phalconite.domain.UnprocessableEntityError
 import io.phalconite.domain.dto.UpdateUserActivationStatusRequestDto
 import io.phalconite.services.user.UserService
 import org.kodein.di.instance
@@ -92,7 +92,7 @@ fun Route.userRoutes() {
                 val uid = call.parameters["uid"] ?: return@either shift(BadRequestError("Invalid Route Parameter!"))
                 val requestBody = runCatching {
                     call.receive<UpdateUserInfoRequestDto>()
-                }.getOrElse { return@either shift(UnprocessableEntity) }
+                }.getOrElse { return@either shift(UnprocessableEntityError) }
 
                 val response = userService.updateUserInfo(uid, requestBody).bind()
 
@@ -110,7 +110,7 @@ fun Route.userRoutes() {
                 val uid = call.parameters["uid"] ?: return@either shift(BadRequestError("Invalid Route Parameter!"))
                 val requestBody = runCatching {
                     call.receive<UpdateUserActivationStatusRequestDto>()
-                }.getOrElse { return@either shift(UnprocessableEntity) }
+                }.getOrElse { return@either shift(UnprocessableEntityError) }
 
                 val response = userService.updateUserActivationStatus(uid, requestBody).bind()
 

@@ -23,6 +23,11 @@ sealed interface DomainError {
         override val message: String
             get() = "The request body is in an invalid format. Please check and try again..."
     }
+    data class IllegalArgumentError(override val message: String) : DomainError
+    object ForbiddenActionError : DomainError {
+        override val message: String
+            get() = "You are not permitted to perform this action!"
+    }
 }
 
 typealias AuthInvalidCredentials = DomainError.AuthException.InvalidCredentials
@@ -31,4 +36,6 @@ typealias EntityNotFoundError = DomainError.EntityNotFoundError
 typealias ConflictRecordError = DomainError.ConflictRecordError
 typealias DatabaseError = DomainError.DatabaseError
 typealias BadRequestError = DomainError.BadRequestError
-typealias UnprocessableEntity = DomainError.UnprocessableEntity
+typealias UnprocessableEntityError = DomainError.UnprocessableEntity
+typealias IllegalArgumentError = DomainError.IllegalArgumentError
+typealias ForbiddenActionError = DomainError.ForbiddenActionError

@@ -61,9 +61,21 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleError(error: DomainErro
             GenericErrorResponse(error.message)
         )
     }
-    is UnprocessableEntity -> {
+    is UnprocessableEntityError -> {
         call.respond(
             status = HttpStatusCode.UnprocessableEntity,
+            GenericErrorResponse(error.message)
+        )
+    }
+    is IllegalArgumentError -> {
+        call.respond(
+            status = HttpStatusCode.BadRequest,
+            GenericErrorResponse(error.message)
+        )
+    }
+    is ForbiddenActionError -> {
+        call.respond(
+            status = HttpStatusCode.Forbidden,
             GenericErrorResponse(error.message)
         )
     }

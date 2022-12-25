@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.javatime.datetime
 
 object ProjectTypeTable : IntIdTable("project_type") {
     val uid = varchar("uid", 50).uniqueIndex()
-    val name = varchar("name", 30)
+    val name = varchar("name", 30).uniqueIndex()
     val description = varchar("description", 100)
     val created_at = datetime("created_at")
     val updated_at = datetime("updated_at")
